@@ -1,0 +1,19 @@
+🧍‍♂️ User Actions
+
+User clicks “Buy” / “Pay” on your site.
+
+Your frontend calls a backend route → /api/checkout.
+
+Backend creates a Stripe Checkout Session via the Stripe API.
+
+Stripe returns a Checkout URL.
+
+The frontend redirects user to that Checkout page.
+
+User completes payment on Stripe’s hosted page (PromptPay, card, etc.).
+
+Stripe redirects back to your site → /success?session_id=....
+
+Your frontend calls /api/session to verify payment status and display result.
+
+(Optional) Stripe also sends webhook events to your server for final confirmation and database updates.
