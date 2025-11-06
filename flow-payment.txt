@@ -4,6 +4,8 @@ User clicks “Buy” / “Pay” on your site.
 
 Your frontend calls a backend route → /api/checkout.
 
+
+
 Backend creates a Stripe Checkout Session via the Stripe API.
 
 Stripe returns a Checkout URL.
