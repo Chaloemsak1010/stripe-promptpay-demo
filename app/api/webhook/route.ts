@@ -9,7 +9,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-10-29.clover',
 });
 
-// The webhook signing secret from Stripe Dashboard
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(req: NextRequest) {
@@ -21,25 +20,38 @@ export async function POST(req: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(payload, sig!, webhookSecret);
   } catch (err) {
-    console.error('⚠️ Webhook signature verification failed.', err);
-    return new NextResponse(`Webhook Error: ${err}`, { status: 400 });
+    console.error('⚠️ Webhook signature verification failed:', err);
+    return new NextResponse('Invalid signature', { status: 400 });
   }
 
-  // Handle different event types
+  // --- Handle only "paid" and "not paid/expired" ---
   switch (event.type) {
-    case 'checkout.session.completed':
+    // ✅ Payment succeeded (user paid)
+    case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
-      console.log('✅ Payment successful:', session.id);
-      // You can update your database here (e.g., mark order as paid)
-      break;
+      console.log('✅ User paid successfully:', session.id);
 
-    case 'checkout.session.async_payment_failed':
-      console.log('❌ Payment failed:', event.data.object);
+      // Example: update DB order to "paid"
+      // await updateOrderStatus(session.client_reference_id, 'paid');
+
       break;
+    }
+
+    // ❌ Payment failed or expired
+    case 'checkout.session.async_payment_failed':
+    case 'checkout.session.expired': {
+      const session = event.data.object as Stripe.Checkout.Session;
+      console.log('❌ Payment not completed or expired:', session.id);
+
+      // Example: update DB order to "failed" or "expired"
+      // await updateOrderStatus(session.client_reference_id, 'failed');
+
+      break;
+    }
 
     default:
-      console.log(`Unhandled event type: ${event.type}`);
+      console.log(`ℹ️ Ignored event type: ${event.type}`);
   }
 
-  return new NextResponse('Received', { status: 200 });
+  return new NextResponse('OK', { status: 200 });
 }

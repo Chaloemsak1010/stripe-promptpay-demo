@@ -1,0 +1,11 @@
+Ref: https://docs.stripe.com/stripe-cli/install?install-method=windows
+
+FOR windows os:
+1. GO to https://github.com/stripe/stripe-cli/releases/tag/v1.32.0
+2. Download: stripe_1.32.0_windows_x86_64.zip and Unpack it 
+3. Use CMD run( where u install it ) --> "C:\Users\chaloemsak\Downloads\stripe_1.32.0_windows_x86_64 (1)\stripe.exe" login
+4. Login and U will get STRIPE_WEBHOOK_SECRET put to your .events
+5. run --> stripe listen --forward-to localhost:3000/api/webhook
+6.Optional we can use stripe trigger event here to catch the event
+
+

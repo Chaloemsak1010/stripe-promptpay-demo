@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
             product_data: {
               name: 'เสื้อยืด',
             },
-            unit_amount: 100000, // == 1,000 baht
+            unit_amount: 1000, // == 1,000 baht
           },
           quantity: 1,
         },
